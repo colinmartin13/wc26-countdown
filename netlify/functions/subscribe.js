@@ -21,10 +21,12 @@ exports.handler = async function(event, context) {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
   }
 
-  let email;
+  let email, firstName, lastName;
   try {
     const body = JSON.parse(event.body);
-    email = body.email;
+    email     = body.email;
+    firstName = body.firstName || '';
+    lastName  = body.lastName  || '';
   } catch(e) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid request body' }) };
   }
@@ -51,7 +53,9 @@ exports.handler = async function(event, context) {
           reactivate_existing:  false,
           send_welcome_email:   true,
           utm_source:           'wc26-pwa',
-          utm_medium:           'gate'
+          utm_medium:           'gate',
+          first_name:           firstName,
+          last_name:            lastName
         })
       }
     );
