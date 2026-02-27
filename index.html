@@ -233,6 +233,10 @@
     <div class="gate-value">Sign up for free access to our World Cup 2026 countdown and exclusive tournament tracker.</div>
     <div id="gateForm">
       <div class="gate-form">
+        <div style="display:flex;gap:10px;">
+          <input class="gate-input" id="firstNameInput" type="text" placeholder="First name" autocomplete="given-name" style="flex:1;">
+          <input class="gate-input" id="lastNameInput" type="text" placeholder="Last name" autocomplete="family-name" style="flex:1;">
+        </div>
         <input class="gate-input" id="emailInput" type="email" placeholder="your@email.com" autocomplete="email" inputmode="email">
         <button class="gate-btn" id="submitBtn">Get Free Access ⚽</button>
       </div>
@@ -410,7 +414,9 @@ if (localStorage.getItem('ft_subscribed')) {
 }
 
 var submitBtn   = document.getElementById('submitBtn');
-var emailInput  = document.getElementById('emailInput');
+var emailInput     = document.getElementById('emailInput');
+  var firstNameInput = document.getElementById('firstNameInput');
+  var lastNameInput  = document.getElementById('lastNameInput');
 var gateError   = document.getElementById('gateError');
 var gateForm    = document.getElementById('gateForm');
 var gateWelcome = document.getElementById('gateWelcome');
@@ -425,7 +431,7 @@ function showWelcomeAndReveal() {
   setTimeout(revealApp, 3000);
 }
 
-async function submitEmail(email) {
+async function submitEmail(email, firstName, lastName) {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Signing you up…';
   gateError.textContent = '';
@@ -433,7 +439,7 @@ async function submitEmail(email) {
     var res = await fetch('/.netlify/functions/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email })
+      body: JSON.stringify({ email: email, firstName: firstName, lastName: lastName })
     });
     var d = await res.json().catch(function(){ return {}; });
     if (res.ok) {
@@ -453,11 +459,17 @@ async function submitEmail(email) {
 }
 
 submitBtn.addEventListener('click', function() {
-  var email = emailInput.value.trim();
+  var firstName = firstNameInput.value.trim();
+  var lastName  = lastNameInput.value.trim();
+  var email     = emailInput.value.trim();
+  if (!firstName) { gateError.textContent = 'Please enter your first name.'; firstNameInput.focus(); return; }
+  if (!lastName)  { gateError.textContent = 'Please enter your last name.'; lastNameInput.focus(); return; }
   if (!isValidEmail(email)) { gateError.textContent = 'Please enter a valid email address.'; emailInput.focus(); return; }
-  submitEmail(email);
+  submitEmail(email, firstName, lastName);
 });
 emailInput.addEventListener('keydown', function(e) { if (e.key==='Enter') submitBtn.click(); });
+  firstNameInput.addEventListener('keydown', function(e) { if (e.key==='Enter') submitBtn.click(); });
+  lastNameInput.addEventListener('keydown', function(e) { if (e.key==='Enter') submitBtn.click(); });
 
 // ── Countdown clock DOM refs (must be before tick() is called) ───────────────
 var daysEl   = document.getElementById('days');
