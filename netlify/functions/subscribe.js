@@ -49,13 +49,15 @@ exports.handler = async function(event, context) {
           'Authorization': `Bearer ${BEEHIIV_API_KEY}`
         },
         body: JSON.stringify({
-          email:                email,
-          reactivate_existing:  false,
-          send_welcome_email:   true,
-          utm_source:           'wc26-pwa',
-          utm_medium:           'gate',
-          first_name:           firstName,
-          last_name:            lastName
+          email:               email,
+          reactivate_existing: false,
+          send_welcome_email:  true,
+          utm_source:          'wc26-pwa',
+          utm_medium:          'gate',
+          custom_fields: [
+            { name: 'First Name', value: firstName },
+            { name: 'Last Name',  value: lastName  }
+          ]
         })
       }
     );
